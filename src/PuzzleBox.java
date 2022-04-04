@@ -3,7 +3,7 @@ import java.util.*;
 
 public class PuzzleBox {
     int[][] M;
-    int rows, cols; 
+    int rows, cols;
 
     // konstruktor default
     public PuzzleBox() {
@@ -12,13 +12,19 @@ public class PuzzleBox {
         this.M = new int[rows][cols];
     }
 
+    // fungsi helper untuk convert array of int ke ArrayList
+    ArrayList<Integer> arrayToList(int[] initList) {
+        ArrayList<Integer> resultList = new ArrayList<Integer>(initList.length);
+        for (int i : initList) {
+            resultList.add(i);
+        }
+        return resultList;
+    }
+
     // membangkitkan urutan puzzle secara acak
     ArrayList<Integer> randomizeNum() {
         int[] initNum = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
-        ArrayList<Integer> listNum = new ArrayList<Integer>(initNum.length);
-        for (int i : initNum) {
-            listNum.add(i);
-        }
+        ArrayList<Integer> listNum = arrayToList(initNum);
         ArrayList<Integer> result = new ArrayList<Integer>();
         Random rand = new Random();
         // selama list awal belum kosong, pindahkan value pada index
@@ -77,6 +83,37 @@ public class PuzzleBox {
         }
     }
 
+    // mencari posisi baris empty tile
+    public int getRowEmpty(PuzzleBox pBox) {
+        for (int i = 0; i < pBox.rows; i++) {
+            for (int j = 0; j < pBox.cols; j++) {
+                if (pBox.M[i][j] == 0)  return i;
+            }
+        }
+        return -1;
+    }
+
+    // mencari posisi kolom empty tile
+    public int getColEmpty(PuzzleBox pBox) {
+        for (int i = 0; i < pBox.rows; i++) {
+            for (int j = 0; j < pBox.cols; j++) {
+                if (pBox.M[i][j] == 0)  return j;
+            }
+        }
+        return -1;
+    }
+
+    // fungsi untuk menyalin PuzzleBox
+    public PuzzleBox copyPBox(PuzzleBox pBox){
+        PuzzleBox pbCopy = new PuzzleBox();
+        for (int i = 0; i < pBox.rows; i++){
+            for(int j = 0; j < pBox.cols; j++){
+                pbCopy.M[i][j] = pBox.M[i][j];
+            }
+        }
+        return pbCopy;
+    }
+
     // convert puzzle ke list untuk mempermudah pemeriksaan
     ArrayList<Integer> puzzleToList(PuzzleBox pBox) {
         ArrayList<Integer> pList = new ArrayList<Integer>();
@@ -91,10 +128,7 @@ public class PuzzleBox {
     // teorema untuk menghitung reachable goal
     public int[] teoremaKurang(PuzzleBox pBox) {
         int[] posisiX = {1, 3, 4, 6, 9, 11, 12, 14};    // posisi nilai X=1
-        ArrayList<Integer> listX = new ArrayList<Integer>(posisiX.length);
-        for (int i : posisiX) {
-            listX.add(i);
-        }
+        ArrayList<Integer> listX = arrayToList(posisiX);
         ArrayList<Integer> pList = puzzleToList(pBox);  // urutan puzzle
         int[] kurang = new int[17];     // elemen terakhir adalah nilai X
         int nilaiX = 0;
@@ -134,21 +168,10 @@ public class PuzzleBox {
         return (total % 2 == 0);
     }
 
-    // memeriksa apakah keadaan saat ini adalah goal state
-    public boolean isGoalState(PuzzleBox pBox) {
-        int[] goal = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
-        ArrayList<Integer> goalList = new ArrayList<Integer>(goal.length);
-        for (int i : goal) {
-            goalList.add(i);
-        }
-        ArrayList<Integer> pList = puzzleToList(pBox);
-        return (pList.equals(goalList));
-    }
-    
     // menampilkan puzzle ke terminal
     public void printPuzzleBox() {
-        for(int i = 0; i < this.rows; i++) {
-            for(int j = 0; j < this.cols; j++) {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
                 System.out.print(Integer.toString(this.M[i][j]) + " ");
             }
             System.out.println();
